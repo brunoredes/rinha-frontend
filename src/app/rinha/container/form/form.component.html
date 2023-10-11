@@ -1,0 +1,8 @@
+<form [formGroup]="jsonForm">
+    <legend>Simple JSON Viewer that runs completely on-client. No data exchange</legend>
+    <fieldset>
+        <input type="file" name="loadJSON" id="loadJson" accept=".json" formControlName="file">
+        <span *ngIf="jsonForm.controls.file.invalid && jsonForm.controls.file.dirty">Invalid file. Please load a valid
+            JSON file</span>
+    </fieldset>
+</form>
