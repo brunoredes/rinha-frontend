@@ -1,7 +1,4 @@
-<ng-container>
-    <div class="a">
-        <div>
-            {{json | json}}
-        </div>
-    </div>
+<ng-container class="json-container">
+    <!-- {{ jsonData | json }} -->
+    <ngx-json-viewer [json]="jsonData"></ngx-json-viewer>
 </ng-container>

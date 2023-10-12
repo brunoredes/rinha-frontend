@@ -1,6 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
-import { Actor } from '../../container/viewer/viewer.component';
-import { JsonServiceService } from '../../services/json-service.service';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'rinha-json-list',
@@ -9,18 +7,6 @@ import { JsonServiceService } from '../../services/json-service.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class JsonListComponent {
-  @Input() json!: JSON;
-  private service = inject(JsonServiceService);
-  jsonParts: any[] = [];
-  private reader?: ReadableStreamReader<any>;
+  @Input() jsonData!: any[];
 
-  ngOnInit() {
-
-  }
-
-  ngOnDestroy() {
-    this.reader?.cancel();
-  }
-
-  
 }

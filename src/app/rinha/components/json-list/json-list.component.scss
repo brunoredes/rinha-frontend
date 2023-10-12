@@ -1,0 +1,11 @@
+:host {
+    display: block;
+    width: 638px;
+    height: 896px;
+
+    ngx-json-viewer::ng-deep {
+        &>section {
+            overflow-y: scroll;
+        }
+    }
+}

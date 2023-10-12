@@ -6,6 +6,7 @@ import { HomeComponent } from './container/home/home.component';
 import { RinhaRoutingModule } from './rinha-routing.module';
 import { ViewerComponent } from './container/viewer/viewer.component';
 import { JsonListComponent } from './components/json-list/json-list.component';
+import { NgxJsonViewerModule } from 'ngx-json-viewer';
 
 
 
@@ -20,7 +21,8 @@ import { JsonListComponent } from './components/json-list/json-list.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RinhaRoutingModule
+    RinhaRoutingModule,
+    NgxJsonViewerModule
   ],
   exports: [FormComponent]
 })

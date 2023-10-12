@@ -1,4 +1,4 @@
-<section>
-    <h1>{{ fileName }}</h1>
-    <rinha-json-list></rinha-json-list>
+<section role="region" aria-labelledby="fileNameTitle" class="viewer-section">
+    <h1 id="fileNameTitle" class="viewer-section__title">{{ fileName }}</h1>
+    <rinha-json-list [jsonData]="jsonData"></rinha-json-list>
 </section>
