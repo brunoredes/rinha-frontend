@@ -1,8 +1,32 @@
-<form [formGroup]="jsonForm">
-    <legend>Simple JSON Viewer that runs completely on-client. No data exchange</legend>
-    <fieldset>
-        <input type="file" name="loadJSON" id="loadJson" accept=".json" formControlName="file">
-        <span *ngIf="jsonForm.controls.file.invalid && jsonForm.controls.file.dirty">Invalid file. Please load a valid
-            JSON file</span>
+<form [formGroup]="jsonForm" class="json-viewer">
+    <legend class="json-viewer__legend">Simple JSON Viewer that runs completely on-client. No data exchange</legend>
+    <fieldset class="json-viewer__fieldset flex ai fc jc">
+        
+        <label for="loadJson" class="json-viewer__label" tabindex="0"
+            [attr.aria-invalid]="jsonForm.controls.file.invalid && jsonForm.controls.file.dirty"
+            aria-errormessage="errorMessageInvalidJson"
+            aria-describedby="inputDescription"
+            (keyup.space)="click()"
+            #label
+            >Load JSON</label>
+        
+        <input type="file" name="loadJSON" class="json-viewer__input" id="loadJson" accept=".json"
+            formControlName="file"
+            (change)="onFileChange($event)"
+            [attr.aria-invalid]="jsonForm.controls.file.invalid && jsonForm.controls.file.dirty"
+            aria-errormessage="errorMessageInvalidJson"
+            aria-describedby="inputDescription"
+            tabindex="-1">
+        
+        <span *ngIf="jsonForm.controls.file.invalid && jsonForm.controls.file.dirty"
+            class="json-viewer__error-message"
+            id="errorMessageInvalidJson">
+            Invalid file. Please load a valid JSON file
+        </span>
+        
+        <span class="json-viewer__description" id="inputDescription" style="display: none; visibility: hidden">
+            Upload a JSON file to view its contents. Upon submission, you will be navigated to a new page displaying the
+            rendered data from the JSON.
+        </span>
     </fieldset>
 </form>
