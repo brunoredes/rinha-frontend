@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, from, mergeMap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, from, mergeMap, of } from 'rxjs';
 import { StreamJsonError } from '../errors/streamJsonError';
+import { jsonParser } from 'src/app/helper/jsonParser';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,10 +15,14 @@ export class JsonServiceService {
     const currentValue = this.jsonDataSubject.value;
 
     if (Array.isArray(chunk)) {
-      this.jsonDataSubject.next([...currentValue, ...chunk]);
+      this.jsonDataSubject.next([...chunk]);
     } else {
-      this.jsonDataSubject.next([...currentValue, chunk]);
+      this.jsonDataSubject.next([chunk]);
     }
+  }
+
+  public destroyObservable() {
+    this.jsonDataSubject.unsubscribe();
   }
 
   public processJsonStream(file: File) {
@@ -27,28 +32,34 @@ export class JsonServiceService {
 
     return this.readFileInChunks(file).pipe(
       mergeMap((chunk: string) => {
-        buffer += chunk;
+        buffer += chunk.trim();
+
         const results = [];
 
+        // Iterate through the buffer and process the JSON strings
         for (let i = 0; i < buffer.length; i++) {
           if (buffer[i] === '{') {
+            if (bracketCounter === 0) {
+              lastProcessedIndex = i;
+            }
             bracketCounter++;
           } else if (buffer[i] === '}') {
             bracketCounter--;
 
             if (bracketCounter === 0) {
-              // We've found a complete JSON object.
               const jsonString = buffer.slice(lastProcessedIndex, i + 1);
-              lastProcessedIndex = i + 1; // Update the index for the next slice
-              console.log(jsonString);
-              const stringifiedJson = JSON.stringify(jsonString);
-              const jsonObj = this.parseJson(stringifiedJson);
-              results.push(jsonObj);
+
+              try {
+                const jsonObj = jsonParser(jsonString);
+                results.push(jsonObj);
+              } catch (error) {
+                throw new StreamJsonError(error);
+              }
             }
           }
         }
 
-        buffer = buffer.slice(lastProcessedIndex);  // Keep the unprocessed portion of the buffer for the next chunk
+        buffer = buffer.slice(lastProcessedIndex + (bracketCounter > 0 ? 1 : 0));
 
         return from(results);
       })
@@ -86,12 +97,13 @@ export class JsonServiceService {
     });
   }
 
-  public parseJson(data: any) {
-    try {
-      return JSON.parse(data);
-    } catch (error) {
-      throw new StreamJsonError(error);
-    }
-  }
+  // public parseJson(data: any) {
+  //   try {
+  //     return JSON.parse(data);
+  //   } catch (error) {
+  //     console.error({ error });
+  //     throw new StreamJsonError(error);
+  //   }
+  // }
 
 }

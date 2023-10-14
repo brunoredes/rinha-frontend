@@ -32,7 +32,8 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "production": {
@@ -51,12 +52,12 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": true,
-              "optimization": true,
-              "vendorChunk": false,
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": false,
-              "namedChunks": true
+              "sourceMap": true,
+              "namedChunks": false
             }
           },
           "defaultConfiguration": "production"
@@ -95,7 +96,8 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           }
         }
       }

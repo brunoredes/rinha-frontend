@@ -3,4 +3,12 @@
     padding-top: 24px;
     width: 638px;
     height: 896px;
+
+    .viewer-section {
+        &__header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
 }

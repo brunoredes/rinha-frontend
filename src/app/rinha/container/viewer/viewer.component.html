@@ -1,4 +1,9 @@
 <section role="region" aria-labelledby="fileNameTitle" class="viewer-section">
-    <h1 id="fileNameTitle" class="viewer-section__title">{{ fileName }}</h1>
+    <div class="viewer-section__header-container">
+        <h1 id="fileNameTitle" class="viewer-section__title">{{ fileName }}</h1>
+        <a routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page" aria-label="Back to home page">
+            <span>Voltar para home</span>
+        </a>
+    </div>
     <rinha-json-list [jsonData]="jsonData"></rinha-json-list>
 </section>
