@@ -12,8 +12,6 @@ export class JsonServiceService {
 
 
   public addData(chunk: any) {
-    const currentValue = this.jsonDataSubject.value;
-
     if (Array.isArray(chunk)) {
       this.jsonDataSubject.next([...chunk]);
     } else {
