@@ -6,8 +6,6 @@
             [attr.aria-invalid]="jsonForm.controls.file.invalid && jsonForm.controls.file.dirty"
             aria-errormessage="errorMessageInvalidJson"
             aria-describedby="inputDescription"
-            (keyup.space)="click()"
-            #label
             >Load JSON</label>
         
         <input type="file" name="loadJSON" class="json-viewer__input" id="loadJson" accept=".json"
@@ -20,8 +18,9 @@
         
         <span *ngIf="jsonForm.controls.file.invalid && jsonForm.controls.file.dirty"
             class="json-viewer__error-message"
+            aria-live="assertive"
             id="errorMessageInvalidJson">
-            Invalid file. Please load a valid JSON file
+            Error: Invalid file. Please load a valid JSON file
         </span>
         
         <span class="json-viewer__description" id="inputDescription" style="display: none; visibility: hidden">

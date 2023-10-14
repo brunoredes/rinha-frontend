@@ -19,6 +19,7 @@ export class JsonServiceService {
       this.jsonDataSubject.next([...currentValue, chunk]);
     }
   }
+
   public processJsonStream(file: File) {
     let buffer = '';
     let bracketCounter = 0;
@@ -39,14 +40,10 @@ export class JsonServiceService {
               // We've found a complete JSON object.
               const jsonString = buffer.slice(lastProcessedIndex, i + 1);
               lastProcessedIndex = i + 1; // Update the index for the next slice
-
-              try {
-                const jsonObj = JSON.parse(jsonString);
-                results.push(jsonObj);
-              } catch (e) {
-                console.error({ error: e });
-                throw new StreamJsonError(e);
-              }
+              console.log(jsonString);
+              const stringifiedJson = JSON.stringify(jsonString);
+              const jsonObj = this.parseJson(stringifiedJson);
+              results.push(jsonObj);
             }
           }
         }
@@ -89,5 +86,12 @@ export class JsonServiceService {
     });
   }
 
+  public parseJson(data: any) {
+    try {
+      return JSON.parse(data);
+    } catch (error) {
+      throw new StreamJsonError(error);
+    }
+  }
 
 }
