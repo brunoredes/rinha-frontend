@@ -5,6 +5,7 @@ import { Observable, Subject, of, takeUntil } from 'rxjs';
 import { JsonError } from 'src/app/helper/jsonParser';
 import { JsonServiceService } from '../../services/json-service.service';
 import { JSONFormType } from '../../types/jsonFormType';
+import { acceptedFormatValidator } from '../../validators/acceptedFormat';
 
 @Component({
   selector: 'rinha-form',
@@ -24,7 +25,7 @@ export class FormComponent implements OnInit, OnDestroy {
     this.jsonForm = this.nonNullableFormBuilder.group<JSONFormType>({
       file: this.nonNullableFormBuilder.control(
         { value: '', disabled: false },
-        { asyncValidators: [this.jsonValidator()] }
+        { validators: [acceptedFormatValidator()], asyncValidators: [this.jsonValidator()] }
       )
     });
 
