@@ -1,4 +1,4 @@
-export function jsonParser(data: any) {
+export function jsonParser(data: string) {
     try {
         return JSON.parse(data);
     } catch (error) {
@@ -12,7 +12,6 @@ export class JsonError extends Error {
     constructor() {
         super();
         this.message = 'Invalid JSON';
-        this.cause = 'Provided data is an invalid JSON';
         this.name = 'JsonError';
     }
 }

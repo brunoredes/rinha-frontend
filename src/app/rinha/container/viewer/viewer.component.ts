@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil, throttleTime } from 'rxjs';
 import { JsonServiceService } from '../../services/json-service.service';
-import { Subject, takeUntil } from 'rxjs';
-
 @Component({
   selector: 'rinha-viewer',
   templateUrl: './viewer.component.html',
@@ -11,13 +10,13 @@ import { Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ViewerComponent implements OnDestroy, OnInit {
-
   private route = inject(ActivatedRoute);
   private titleService = inject(Title);
   private jsonService = inject(JsonServiceService);
   public fileName = this.route.snapshot.params['fileName'];
   public jsonData: any[] = [];
   private ngDestroyed$ = new Subject();
+  private cdr = inject(ChangeDetectorRef);
 
   constructor() {
     this.route.params.subscribe(params => {
@@ -29,18 +28,28 @@ export class ViewerComponent implements OnDestroy, OnInit {
   ngOnInit(): void {
     this.jsonService.jsonData$
       .pipe(
+        throttleTime(100),
         takeUntil(this.ngDestroyed$)
       )
       .subscribe({
         next: (data) => {
-          this.jsonData = data;
+          this.jsonData = [...data];
+        },
+        complete: () => {
+          console.log(this.jsonData);
+          this.updateView();
+
         }
       });
   }
 
   public ngOnDestroy(): void {
+    this.jsonService.resetSubject();
     this.ngDestroyed$.next(true);
     this.ngDestroyed$.complete();
-    this.jsonData = [];
+  }
+
+  private updateView() {
+    this.cdr.detectChanges();
   }
 }
