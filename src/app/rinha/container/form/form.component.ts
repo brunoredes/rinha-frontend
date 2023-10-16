@@ -37,7 +37,6 @@ export class FormComponent implements OnInit, OnDestroy {
   public onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files?.[0];
-    console.log(this.jsonForm.status);
     if(this.jsonForm.invalid) {
       return;
     }

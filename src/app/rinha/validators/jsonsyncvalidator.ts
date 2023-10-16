@@ -12,7 +12,6 @@ export function jsonSyncValidator(control: AbstractControl): ValidationErrors | 
         reader.readAsText(file);
         reader.onload = () => {
             const content = reader.result as string;
-            console.log(content);
             try {
                 JSON.parse(content);
                 return null;
