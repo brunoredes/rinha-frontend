@@ -37,6 +37,7 @@ export class JsonServiceService {
         if (data.type === 'completed') {
           observer.complete();
         } else {
+          console.log(data);
           observer.next(data);
         }
       };

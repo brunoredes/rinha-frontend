@@ -36,7 +36,6 @@ export class ViewerComponent implements OnDestroy, OnInit {
           this.jsonData = [...data];
         },
         complete: () => {
-          console.log(this.jsonData);
           this.updateView();
 
         }

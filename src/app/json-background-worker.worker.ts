@@ -56,6 +56,7 @@ function processJsonStream(file: File) {
 }
 
 
+
 function readFileInChunks(file: File, chunkSize: number = 1024 * 1024): Observable<string> {
   return new Observable((observer) => {
     let offset = 0;

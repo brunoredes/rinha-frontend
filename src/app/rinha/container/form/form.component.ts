@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { AbstractControl, FormGroup, NonNullableFormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormGroup, NonNullableFormBuilder, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ValidationError } from 'ajv';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, of, takeUntil } from 'rxjs';
+import { JsonError } from 'src/app/helper/jsonParser';
 import { JsonServiceService } from '../../services/json-service.service';
 import { JSONFormType } from '../../types/jsonFormType';
-import { jsonValidator } from '../../validators/jsonValidator';
-import { JsonError } from 'src/app/helper/jsonParser';
 
 @Component({
   selector: 'rinha-form',
@@ -26,7 +24,7 @@ export class FormComponent implements OnInit, OnDestroy {
     this.jsonForm = this.nonNullableFormBuilder.group<JSONFormType>({
       file: this.nonNullableFormBuilder.control(
         { value: '', disabled: false },
-        { validators: [this.jsonValidator] }
+        { asyncValidators: [this.jsonValidator()] }
       )
     });
 
@@ -39,8 +37,22 @@ export class FormComponent implements OnInit, OnDestroy {
   public onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files && input.files?.[0];
+    console.log(this.jsonForm.status);
+    if(this.jsonForm.invalid) {
+      return;
+    }
 
     if (file && file.type === "application/json" && this.jsonForm.valid) {
+      this.jsonForm.controls.file.updateValueAndValidity({ emitEvent: true });
+      this.handleForm(file);
+    }
+  }
+
+  private handleForm(file: File) {
+    if (this.jsonForm.invalid) {
+      return;
+    }
+    if (this.jsonForm.valid) {
       this.jsonForm.controls.file.updateValueAndValidity({ emitEvent: true });
       this.jsonService.processJsonUsingWorker(file)
         .pipe(takeUntil(this.ngDestroyed$))
@@ -54,6 +66,8 @@ export class FormComponent implements OnInit, OnDestroy {
 
               this.jsonForm.controls.file.setErrors({ invalidJson: true });
             }
+            this.jsonForm.controls.file.setErrors({ invalidJson: true });
+
           },
           complete: () => {
             const fileName = file.name.split('.').slice(0, -1).join('.');
@@ -63,37 +77,38 @@ export class FormComponent implements OnInit, OnDestroy {
         );
     }
   }
+  private jsonValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> => {
+      const file: File | null = control.value;
 
-  private handleForm() {
-    if (this.jsonForm.invalid) {
-      return;
+      if (!file) {
+        return of(null);
+      }
+
+      if (file && file instanceof File) {
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+
+          fileReader.onload = () => {
+            try {
+              const textRead = fileReader.result as string;
+              JSON.parse(textRead);
+              resolve(null);
+            } catch (e) {
+              resolve({ invalidJson: true });
+            }
+          };
+
+          fileReader.onerror = () => {
+            resolve({ invalidJson: true });
+          };
+
+          fileReader.readAsText(file, "UTF-8");
+        });
+      }
+
+      return of(null);
     }
-    if (this.jsonForm.valid) {
-      this.jsonForm.controls.file.updateValueAndValidity({ emitEvent: true });
-    }
-  }
-  private jsonValidator(control: AbstractControl): { [key: string]: any } | null {
-    const file: File | null = control.value;
-    if(!file) {
-      return null;
-    }
-    if (file && file instanceof File) {
-      const fileReader = new FileReader();
-      fileReader.readAsText(file, "UTF-8");
-      fileReader.onload = () => {
-        try {
-          const textRead = fileReader.result as string;
-          JSON.parse(textRead.trim());
-          return null;
-        } catch (e) {
-          return { invalidJson: true }
-        }
-      };
-      fileReader.onerror = () => {
-        return { invalidJson: true };
-      };
-    }
-    return null;
   }
 
 }
