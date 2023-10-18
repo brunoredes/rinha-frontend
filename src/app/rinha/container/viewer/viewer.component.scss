@@ -1,8 +1,9 @@
 :host {
     display: block;
     padding-top: 24px;
-    width: 638px;
-    height: 896px;
+    max-height: 896px;
+    // width: 638px;
+    // height: 896px;
 
     .viewer-section {
         &__header-container {

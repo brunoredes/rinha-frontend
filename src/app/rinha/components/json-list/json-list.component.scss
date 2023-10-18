@@ -1,7 +1,9 @@
 :host {
     display: block;
-    width: 638px;
-    height: 81dvh;
+    // width: 638px;
+    // height: 81dvh;
+    // max-width: 638px;
+    height: 52rem;
 
     ngx-json-viewer::ng-deep {
         &>section {
